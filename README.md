@@ -30,7 +30,7 @@ This project implements a machine learning model in Go, focusing on data preproc
 
 1. **Data Preprocessing**: Convert raw data into a format suitable for training.
     ```go
-    import "your-repo/utils"
+    import "BayesianClassifier/utils"
 
     data := [][]string{
         {"Yes", "No", "Male"},

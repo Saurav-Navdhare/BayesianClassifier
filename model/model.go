@@ -24,43 +24,8 @@ type Model struct {
 	FeatureStats       map[string]map[int]map[string]float64
 }
 
-//// SaveModel function to save the model parameters to a file
-//func SaveModel(filename string, model Model) error {
-//	for feature := range model.FeatureStats {
-//		for class := range model.FeatureStats[feature] {
-//			if math.IsNaN(model.FeatureStats[feature][class]["mean"]) {
-//				model.FeatureStats[feature][class]["mean"] = 0
-//			}
-//			if math.IsNaN(model.FeatureStats[feature][class]["variance"]) {
-//				model.FeatureStats[feature][class]["variance"] = 0
-//			}
-//		}
-//	}
-//
-//	data, err := json.Marshal(model)
-//	if err != nil {
-//		return err
-//	}
-//
-//	return os.WriteFile(filename, data, 0644)
-//}
-//
-//func LoadModel(filename string) (Model, error) {
-//	data, err := os.ReadFile(filename)
-//	if err != nil {
-//		return Model{}, err
-//	}
-//
-//	var model Model
-//	if err := json.Unmarshal(data, &model); err != nil {
-//		return Model{}, err
-//	}
-//
-//	return model, nil
-//}
-
+// SaveModel function to save the model parameters to a file
 func SaveModel(filename string, model Model) error {
-	// Replace NaN values with 0
 	for feature := range model.FeatureStats {
 		for class := range model.FeatureStats[feature] {
 			if math.IsNaN(model.FeatureStats[feature][class]["mean"]) {
@@ -80,7 +45,6 @@ func SaveModel(filename string, model Model) error {
 	return os.WriteFile(filename, data, 0644)
 }
 
-// LoadModel function to load the model parameters from a JSON file
 func LoadModel(filename string) (Model, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
@@ -90,13 +54,6 @@ func LoadModel(filename string) (Model, error) {
 	var model Model
 	if err := json.Unmarshal(data, &model); err != nil {
 		return Model{}, err
-	}
-
-	// Print weights after loading
-	for feature := range model.FeatureStats {
-		for class := range model.FeatureStats[feature] {
-			fmt.Printf("Class %d, Feature %s: Mean = %.2f, Variance = %.2f\n", class, feature, model.FeatureStats[feature][class]["mean"], model.FeatureStats[feature][class]["variance"])
-		}
 	}
 
 	return model, nil

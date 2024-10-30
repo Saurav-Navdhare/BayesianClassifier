@@ -37,7 +37,7 @@ func SaveModel(filename string, model Model) error {
 		}
 	}
 
-	data, err := json.Marshal(model)
+	data, err := json.MarshalIndent(model, "", "  ")
 	if err != nil {
 		return err
 	}

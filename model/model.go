@@ -75,14 +75,19 @@ func CalculateProbabilities(trainSet map[string][]int) (map[int]float64, map[str
 			continue
 		}
 		featureStats[feature] = make(map[int]map[string]float64)
-		for class := range trainSet["class"] {
-			featureStats[feature][class] = make(map[string]float64)
+		for _, class := range trainSet["class"] {
+			if class == 0 || class == 1 {
+				featureStats[feature][class] = make(map[string]float64)
+			}
 		}
 	}
 
 	// Calculate class counts and sums
 	for i := 0; i < len(trainSet["class"]); i++ {
 		class := trainSet["class"][i]
+		if class != 0 && class != 1 {
+			continue // Skip invalid class labels
+		}
 		classCounts[class]++
 
 		for feature, values := range trainSet {
@@ -113,7 +118,6 @@ func CalculateProbabilities(trainSet map[string][]int) (map[int]float64, map[str
 					variance := (featureStats[feature][class]["sumSq"] / float64(count)) - (mean * mean)
 					featureStats[feature][class]["mean"] = mean
 					featureStats[feature][class]["variance"] = variance
-					fmt.Printf("%sClass %d, Feature %s: Mean = %.2f, Variance = %.2f%s\n", Blue, class, feature, mean, variance, Reset)
 				} else {
 					featureStats[feature][class]["mean"] = math.NaN()
 					featureStats[feature][class]["variance"] = math.NaN()
@@ -122,11 +126,20 @@ func CalculateProbabilities(trainSet map[string][]int) (map[int]float64, map[str
 		}
 	}
 	wg.Wait()
-	newModel := Model{
-		ClassProbabilities: classProbabilities,
-		FeatureStats:       featureStats,
+
+	// Replace NaN values with 0
+	for feature := range featureStats {
+		for class := range featureStats[feature] {
+			if math.IsNaN(featureStats[feature][class]["mean"]) {
+				featureStats[feature][class]["mean"] = 0
+			}
+			if math.IsNaN(featureStats[feature][class]["variance"]) {
+				featureStats[feature][class]["variance"] = 0
+			}
+		}
 	}
-	return newModel.ClassProbabilities, newModel.FeatureStats
+
+	return classProbabilities, featureStats
 }
 
 func gaussianProbability(x, mean, variance float64) float64 {

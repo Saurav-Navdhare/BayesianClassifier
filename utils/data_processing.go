@@ -30,20 +30,6 @@ func BinaryLabelling[T comparable](data [][]T) [][]int {
 	return newData
 }
 
-//func ConvertToDF(data [][]int, headers []string) map[string][]int {
-//	df := make(map[string][]int)
-//	for i, val := range headers {
-//		length := len(data[i])
-//		//fmt.Println(fmt.Sprintf("i: %v\nheader: %v\nlen: %v\n", i, val, length))
-//		tmp := make([]int, length)
-//		for j := 0; j < length; j++ {
-//			tmp[j] = data[i][j]
-//		}
-//		df[val] = tmp
-//	}
-//	return df
-//}
-
 func ConvertToDF(data [][]int, headers []string) map[string][]int {
 	df := make(map[string][]int)
 	for i, val := range headers {
